@@ -13,7 +13,7 @@
     "test:coverage": "gulp coverage",
     "start": "gulp dev",
     "postinstall": "bower install",
-    "precommit": "gulp lint",
+    
     "build": "gulp build"
   },
   "dependencies": {
