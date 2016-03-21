@@ -5,10 +5,10 @@ define(function (require) {
     var notify = new Notifier({
       location: 'Sankey chart response converter'
     });
+
     var nodes = {};
     var links = {};
     var lastNode = -1;
-
     function processEntry(aggConfig, metric, aggData, prevNode) {
       _.each(aggData.buckets, function (b) {
         if (isNaN(nodes[b.key])) {
@@ -30,6 +30,9 @@ define(function (require) {
     }
 
     return function (vis, resp) {
+      nodes = {};
+      links = {};
+      lastNode = -1;
 
       var metric = vis.aggs.bySchemaGroup.metrics[0];
       var buckets = vis.aggs.bySchemaGroup.buckets;
