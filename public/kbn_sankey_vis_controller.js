@@ -53,14 +53,12 @@ define(function (require) {
         .nodeWidth(15)
         .nodePadding(10)
         .size([width, height]);
-      
       var path = sankey.link();
-      
       sankey
         .nodes(energy.nodes)
         .links(energy.links)
         .layout(32);
-      
+
       var link = svg.append('g').selectAll('.link')
         .data(energy.links)
         .enter().append('path')
@@ -68,10 +66,10 @@ define(function (require) {
         .attr('d', path)
         .style('stroke-width', function (d) { return Math.max(1, d.dy);  })
         .sort(function (a, b) { return b.dy - a.dy;  });
-      
+
       link.append('title')
         .text(function (d) { return d.source.name + ' → ' + d.target.name + '\n' + format(d.value);  });
-      
+
       var node = svg.append('g').selectAll('.node')
         .data(energy.nodes)
         .enter().append('g')
@@ -81,7 +79,7 @@ define(function (require) {
         .origin(function (d) { return d;  })
         .on('dragstart', function () { this.parentNode.appendChild(this);  })
         .on('drag', dragmove));
-      
+
       node.append('rect')
         .attr('height', function (d) { return d.dy;  })
         .attr('width', sankey.nodeWidth())
@@ -89,7 +87,7 @@ define(function (require) {
         .style('stroke', function (d) { return d3.rgb(d.color).darker(2);  })
         .append('title')
         .text(function (d) { return d.name + '\n' + format(d.value);  });
-      
+
       node.append('text')
         .attr('x', -6)
         .attr('y', function (d) { return d.dy / 2;  })
@@ -100,7 +98,7 @@ define(function (require) {
         .filter(function (d) { return d.x < width / 2;  })
         .attr('x', 6 + sankey.nodeWidth())
         .attr('text-anchor', 'start');
-      
+
       function dragmove(d) {
         d3.select(svgRoot).attr('transform', 'translate(' + d.x + ',' + (d.y = Math.max(0, Math.min(height - d.dy, d3.event.y))) + ')');
         sankey.relayout();
