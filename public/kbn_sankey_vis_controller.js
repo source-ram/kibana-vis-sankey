@@ -42,7 +42,6 @@ define(function (require) {
       div = d3.select(svgRoot);
       if (!energy.nodes.length) return;
 
-      console.log($scope.vis);
       svg = div.append('svg')
         .attr('width', width)
         .attr('height', height + margin)
