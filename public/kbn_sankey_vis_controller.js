@@ -74,10 +74,10 @@ define(function (require) {
         .enter().append('g')
         .attr('class', 'node')
         .attr('transform', function (d) { return 'translate(' + d.x + ',' + d.y + ')';  })
-        .call(d3.behavior.drag()
-        .origin(function (d) { return d;  })
-        .on('dragstart', function () { this.parentNode.appendChild(this);  })
-        .on('drag', dragmove));
+        //.call(d3.behavior.drag()
+        //.origin(function (d) { return d;  })
+        //.on('dragstart', function () { this.parentNode.appendChild(this);  })
+        //.on('drag', dragmove));
 
       node.append('rect')
         .attr('height', function (d) { return d.dy;  })
