@@ -11,12 +11,13 @@ define(function (require) {
     var lastNode = -1;
     function processEntry(aggConfig, metric, aggData, prevNode) {
       _.each(aggData.buckets, function (b) {
-        if (isNaN(nodes[b.key])) {
-          nodes[b.key] = lastNode + 1;
+        var bkey = aggConfig.fieldFormatter()(b.key);
+        if (isNaN(nodes[bkey])) {
+          nodes[bkey] = lastNode + 1;
           lastNode = _.max(_.values(nodes));
         }
         if (aggConfig._previous) {
-          var k = prevNode + 'sankeysplitchar' + nodes[b.key];
+          var k = prevNode + 'sankeysplitchar' + nodes[bkey];
           if (isNaN(links[k])) {
             links[k] = metric.getValue(b);
           } else {
@@ -24,7 +25,7 @@ define(function (require) {
           }
         }
         if (aggConfig._next) {
-          processEntry(aggConfig._next, metric, b[aggConfig._next.id], nodes[b.key]);
+          processEntry(aggConfig._next, metric, b[aggConfig._next.id], nodes[bkey]);
         }
       });
     }
@@ -48,6 +49,11 @@ define(function (require) {
         notify.error('need more than one sub aggs');
       }
 
+      // reset these three variables, so that everything is fresh for refresh
+      nodes = {};
+      links = {};
+      lastNode = -1;
+    
       processEntry(firstAgg, metric, aggData, -1);
 
       var invertNodes = _.invert(nodes);
