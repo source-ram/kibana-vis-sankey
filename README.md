@@ -13,7 +13,7 @@ git clone https://github.com/chenryn/kbn_sankey_vis.git
 cd kbn_sankey_vis
 npm install
 npm run build
-cp -R build/kbn_sankey_vis KIBANA_FOLDER_PATH/installedPlugins/
+cp -R build/kbn_sankey_vis KIBANA_FOLDER_PATH/plugins/
 ```
 
 # Uninstall
