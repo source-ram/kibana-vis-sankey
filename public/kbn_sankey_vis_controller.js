@@ -1,3 +1,6 @@
+var observeResize = require('./lib/observe_resize');
+require('./lib/observe_resize');
+
 define(function (require) {
   var module = require('ui/modules').get('kibana/kbn_sankey_vis', ['kibana']);
   var d3 = require('d3');
@@ -78,18 +81,19 @@ define(function (require) {
         .attr('transform', function (d) { return 'translate(' + d.x + ',' + d.y + ')';  })
         .on('click', function(node){
           console.log('click',node);
-          return;
-          let searchField = selected.field;
+          console.log('fields', energy.fields);
+
+          let searchField = energy.fields[node.name].field;
           const q2 = {
             query: {
               match: {}
             },
             meta: {
-              index: selected.index
+              index: energy.fields[node.name].index
             }
           };
           q2.query.match[searchField] = {
-            query: selected.query,
+            query: node.name,
             type: 'phrase'
           };
           queryFilter.addFilters([q2]);
@@ -126,14 +130,22 @@ define(function (require) {
     };
 
 
-    var _render = function (data) {
+    var _render = window.render = function (data) {
       d3.select(svgRoot).selectAll('svg').remove();
       _buildVis(data);
     };
 
+    var chartData;
     $scope.$watch('esResponse', function (resp) {
       if (resp) {
-        var chartData = sankeyAggResponse($scope.vis, resp);
+        chartData = sankeyAggResponse($scope.vis, resp);
+        _updateDimensions();
+        _render(chartData);
+      }
+    });
+
+    observeResize($element, function () {
+      if (chartData) {
         _updateDimensions();
         _render(chartData);
       }

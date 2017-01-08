@@ -8,17 +8,21 @@ define(function (require) {
 
     var nodes = {};
     var links = {};
+    var fields = {};
     var lastNode = -1;
     function processEntry(aggConfig, metric, aggData, prevNode) {
       _.each(aggData.buckets, function (b) {
         var field = aggConfig.params.field.name;
+        var index = aggConfig.vis.indexPattern.id;
+
         var bkey = aggConfig.fieldFormatter()(b.key);
+        fields[bkey] = {index, field};
         if (isNaN(nodes[bkey])) {
-          nodes[bkey] = {value: lastNode + 1, name: b.key, field};
-          lastNode = _.max(nodes, _.property('value')).value;
+          nodes[bkey] = lastNode + 1;
+          lastNode = _.max(_.values(nodes));
         }
         if (aggConfig._previous) {
-          var k = prevNode.value + 'sankeysplitchar' + nodes[bkey].value;
+          var k = prevNode + 'sankeysplitchar' + nodes[bkey];
           if (isNaN(links[k])) {
             links[k] = metric.getValue(b);
           } else {
@@ -56,22 +60,18 @@ define(function (require) {
       lastNode = -1;
 
       processEntry(firstAgg, metric, aggData, -1);
+      var invertNodes = _.invert(nodes);
       var chart = {
         'slices': {
-          'nodes' : _.map(_.keys(nodes), function (k) { return {'name':k}; }),
+          'fields': fields,
+          'nodes' : _.map(_.keys(invertNodes), function (k) { return {'name':invertNodes[k]}; }),
           'links' : _.map(_.keys(links), function (k) {
             var s = k.split('sankeysplitchar');
             return {'source': parseInt(s[0]), 'target': parseInt(s[1]), 'value': links[k]};
           })
         }
       };
-      chart.slices.fields = _.reduce(nodes, function(hash, value) {
-        var key = value['name'];
-        hash[key] = value['field'];
-        return hash;
-      }, {});
 
-console.log(chart);
       return chart;
     };
   };
