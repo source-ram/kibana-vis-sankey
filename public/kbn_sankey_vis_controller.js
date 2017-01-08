@@ -9,6 +9,7 @@ define(function (require) {
 
   module.controller('KbnSankeyVisController', function ($scope, $element, $rootScope, Private) {
     var sankeyAggResponse = Private(require('./lib/agg_response'));
+    const queryFilter = Private(require('ui/filter_bar/query_filter'));
 
     var svgRoot = $element[0];
     var color = d3.scale.category10();
@@ -40,6 +41,7 @@ define(function (require) {
     var _buildVis = function (data) {
       var energy = data.slices;
       div = d3.select(svgRoot);
+
       if (!energy.nodes.length) return;
 
       svg = div.append('svg')
@@ -74,6 +76,24 @@ define(function (require) {
         .enter().append('g')
         .attr('class', 'node')
         .attr('transform', function (d) { return 'translate(' + d.x + ',' + d.y + ')';  })
+        .on('click', function(node){
+          console.log('click',node);
+          return;
+          let searchField = selected.field;
+          const q2 = {
+            query: {
+              match: {}
+            },
+            meta: {
+              index: selected.index
+            }
+          };
+          q2.query.match[searchField] = {
+            query: selected.query,
+            type: 'phrase'
+          };
+          queryFilter.addFilters([q2]);
+        })
         //.call(d3.behavior.drag()
         //.origin(function (d) { return d;  })
         //.on('dragstart', function () { this.parentNode.appendChild(this);  })
