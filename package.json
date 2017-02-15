@@ -16,7 +16,8 @@
     "build": "gulp build"
   },
   "dependencies": {
-    "d3-plugins-sankey": ">=1.1.0"
+    "d3-plugins-sankey": ">=1.1.0",
+    "bower": "*"
   },
   "devDependencies": {
     "babel-eslint": "^4.1.8",
