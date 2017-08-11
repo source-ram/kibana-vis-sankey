@@ -2,7 +2,8 @@ var observeResize = require('./lib/observe_resize');
 require('./lib/observe_resize');
 
 define(function (require) {
-  var module = require('ui/modules').get('kibana/kbn_sankey_vis', ['kibana']);
+  import { uiModules } from 'ui/modules';
+  var module = uiModules.get('kibana/kbn_sankey_vis', []);
   var d3 = require('d3');
   var _ = require('lodash');
   var $ = require('jquery');
@@ -12,7 +13,7 @@ define(function (require) {
 
   module.controller('KbnSankeyVisController', function ($scope, $element, $rootScope, Private) {
     var sankeyAggResponse = Private(require('./lib/agg_response'));
-    const queryFilter = Private(require('ui/filter_bar/query_filter'));
+    const queryFilter = = Private(FilterBarQueryFilterProvider);
 
     var svgRoot = $element[0];
     var color = d3.scale.category10();
